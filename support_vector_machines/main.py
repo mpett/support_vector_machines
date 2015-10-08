@@ -71,12 +71,16 @@ def plot_decision_boundary():
 def main():
     data = generate_datapoints()
     N = len(data)
-    q_list = [-1] * N
-    h_list = [0] * N
-    q_vector = tuple(q_list)
-    h_vector = tuple(h_list)
-    g_matrix = [[0 for element in range(N)] for element in range(N)]
+    q_vector = [-1.0 for e in range(N)]
+    h_vector = [0.0] * N
+    g_matrix = [[0.0 for element in range(N)] for element in range(N)]
     for i in range(N):
         g_matrix[i][i] = -1
-        
+    p_matrix = generate_p_matrix(data)
+    P = matrix(p_matrix)
+    q = matrix(q_vector)
+    G = matrix(g_matrix)
+    h = matrix(h_vector)
+    qp(P,q,G,h)
+    
 main()

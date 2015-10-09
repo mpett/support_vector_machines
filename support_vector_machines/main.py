@@ -7,6 +7,10 @@ import numpy as np
 alpha = []
 non_zero_alphas = []
 data = []
+t_values = []
+vectors = []
+classA = []
+classB = []
 
 def linear_kernel(x,y):
     return np.dot(x, np.transpose(y))
@@ -24,14 +28,14 @@ def sigmoid_kernel(x,y,k,delta):
 def indicator(x,y):
     x_star = [x,y]
     sum = 0
-    t_values = [0 for element in range(len(data))]
-    vectors = [0 for element in range(len(data))]
     for index in non_zero_alphas:
         sum += alpha[index]*t_values[index]*linear_kernel(x_star,vectors[index])
     return sum
 
 def generate_p_matrix(data):
     p_matrix = [[0 for element in range(len(data))] for element in range(len(data))]
+    global t_values
+    global vectors
     t_values = [0 for element in range(len(data))]
     vectors = [0 for element in range(len(data))]
     index = 0
@@ -45,6 +49,8 @@ def generate_p_matrix(data):
     return p_matrix
 
 def generate_datapoints():
+    global classA
+    global classB
     classA = [(random.normalvariate(-1.5, 1),
                random.normalvariate(0.5, 1), 1.0)
               for i in range(5)] + \
@@ -56,7 +62,6 @@ def generate_datapoints():
                  for i in range(10)]
     data = classA + classB
     random.shuffle(data)
-    plot_datapoints(classA,classB)
     return data
 
 def plot_datapoints(classA, classB):
@@ -76,6 +81,20 @@ def plot_datapoints(classA, classB):
                   linewidths=(1,3,1))
     pylab.show()
 
+def makeSlackG(data):
+    G = [[0.0 for x in range(2*len(data))] for x in range(len(data))]
+    for i in range(len(data)):
+        G[i][i] = -1.0
+    for j in range(len(data)):
+        G[j][len(data) + j] = 1.0
+    return G
+
+def makeSlackH(data, C):
+    h = [0.0 for x in range(2*len(data))]
+    for i in range(len(data), 2*len(data)):
+        h[i] = C
+    return h
+
 def main():
     global alpha
     global non_zero_alphas
@@ -90,6 +109,8 @@ def main():
     p_matrix = generate_p_matrix(data)
     P = matrix(p_matrix)
     q = matrix(q_vector)
+    g_matrix = makeSlackG(data)
+    h_vector = makeSlackH(data, 100)
     G = matrix(g_matrix)
     h = matrix(h_vector)
     r=qp(P,q,G,h)
@@ -97,7 +118,6 @@ def main():
     non_zero_alphas = [i for i, e in enumerate(alpha) if e > 0.00005]
     print(alpha)
     print(non_zero_alphas)
-
-
+    plot_datapoints(classA,classB)
+    
 main()
-

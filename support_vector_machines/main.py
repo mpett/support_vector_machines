@@ -12,15 +12,22 @@ vectors = []
 classA = []
 classB = []
 
+def K(x,y):
+    return linear_kernel(x,y)
+    #return polynomial_kernel(x,y,2)
+    #return polynomial_kernel(x,y,3)
+    #return sigmoid_kernel(x,y,1.0/50,0.0)
+    #return radial_basis_function_kernel(x,y,5)
+
 def linear_kernel(x,y):
     return np.dot(x, np.transpose(y))
 
 def polynomial_kernel(x,y,p):
     return math.pow((np.dot(x, np.transpose(y)) + 1), p)
 
-def radial_basis_function_kernel(x,y,sigma):
-    exponent = math.pow(x-y,2) / math.pow(2*sigma,2)
-    return math.exp(-exponent)
+def radial_basis_function_kernel(d1,d2,s):
+    dist = (d1[0]-d2[0], d1[1]-d2[1])
+    return math.exp(-(np.dot(dist, dist)/(2*(s**2))))
 
 def sigmoid_kernel(x,y,k,delta):
     return math.tanh(k*np.dot(np.transpose(x),y) - delta)
@@ -29,7 +36,7 @@ def indicator(x,y):
     x_star = [x,y]
     sum = 0
     for index in non_zero_alphas:
-        sum += alpha[index]*t_values[index]*linear_kernel(x_star,vectors[index])
+        sum += alpha[index]*t_values[index]*K(x_star,vectors[index])
     return sum
 
 def generate_p_matrix(data):
@@ -45,7 +52,7 @@ def generate_p_matrix(data):
         index+=1
     for i in range(len(data)):
         for j in range(len(data)):
-            p_matrix[i][j] = t_values[i]*t_values[j]*linear_kernel(vectors[i],vectors[j])
+            p_matrix[i][j] = t_values[i]*t_values[j]*K(vectors[i],vectors[j])
     return p_matrix
 
 def generate_datapoints():
@@ -102,7 +109,6 @@ def main():
     data = generate_datapoints()
     N = len(data)
     q_vector = [-1.0 for e in range(N)]
-    h_vector = [0.0] * N
     g_matrix = [[0.0 for element in range(N)] for element in range(N)]
     for i in range(N):
         g_matrix[i][i] = -1.0
@@ -119,5 +125,5 @@ def main():
     print(alpha)
     print(non_zero_alphas)
     plot_datapoints(classA,classB)
-    
+
 main()

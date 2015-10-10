@@ -13,9 +13,9 @@ classA = []
 classB = []
 
 def K(x,y):
-    return linear_kernel(x,y)
+    #return linear_kernel(x,y)
     #return polynomial_kernel(x,y,2)
-    #return polynomial_kernel(x,y,3)
+    return polynomial_kernel(x,y,3)
     #return sigmoid_kernel(x,y,1.0/50,0.0)
     #return radial_basis_function_kernel(x,y,5)
 
@@ -58,15 +58,9 @@ def generate_p_matrix(data):
 def generate_datapoints():
     global classA
     global classB
-    classA = [(random.normalvariate(-1.5, 1),
-               random.normalvariate(0.5, 1), 1.0)
-              for i in range(5)] + \
-                [(random.normalvariate(1.5,1),
-                  random.normalvariate(0.5,1), 1.0)
-                 for i in range(5)]
-    classB = [(random.normalvariate(0.0,0.5),
-                  random.normalvariate(-0.5,0.5), -1.0)
-                 for i in range(10)]
+    classA = [(random.normalvariate(-1.5, 1), random.normalvariate(0.5, 1), 1.0) for i in range(5)] + \
+                [(random.normalvariate(1.5,1), random.normalvariate(0.5,1), 1.0) for i in range(5)]
+    classB = [(random.normalvariate(0.0,0.5), random.normalvariate(-0.5,0.5), -1.0) for i in range(10)]
     data = classA + classB
     random.shuffle(data)
     return data
@@ -82,10 +76,7 @@ def plot_datapoints(classA, classB):
     xrange = np.arange(-4,4,0.05)
     yrange = np.arange(-4,4,0.05)
     grid = matrix([[indicator(x,y) for y in yrange] for x in xrange])
-    pylab.contour(xrange,yrange,grid,
-                  (-1.0,0.0,1.0),
-                  colors=('red','black','blue'),
-                  linewidths=(1,3,1))
+    pylab.contour(xrange,yrange,grid, (-1.0,0.0,1.0), colors=('red','black','blue'), linewidths=(1,3,1))
     pylab.show()
 
 def makeSlackG(data):
@@ -113,17 +104,11 @@ def main():
     for i in range(N):
         g_matrix[i][i] = -1.0
     p_matrix = generate_p_matrix(data)
-    P = matrix(p_matrix)
-    q = matrix(q_vector)
     g_matrix = makeSlackG(data)
     h_vector = makeSlackH(data, 100)
-    G = matrix(g_matrix)
-    h = matrix(h_vector)
-    r=qp(P,q,G,h)
+    r=qp(matrix(p_matrix), matrix(q_vector), matrix(g_matrix), matrix(h_vector))
     alpha = list(r['x'])
     non_zero_alphas = [i for i, e in enumerate(alpha) if e > 0.00005]
-    print(alpha)
-    print(non_zero_alphas)
     plot_datapoints(classA,classB)
 
 main()

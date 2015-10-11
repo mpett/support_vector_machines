@@ -67,12 +67,8 @@ def generate_datapoints():
 
 def plot_datapoints(classA, classB):
     pylab.hold(True)
-    pylab.plot([p[0] for p in classA],
-               [p[1] for p in classA],
-               'bo')
-    pylab.plot([p[0] for p in classB],
-               [p[1] for p in classB],
-               'ro')
+    pylab.plot([p[0] for p in classA], [p[1] for p in classA], 'bo')
+    pylab.plot([p[0] for p in classB], [p[1] for p in classB], 'ro')
     xrange = np.arange(-4,4,0.05)
     yrange = np.arange(-4,4,0.05)
     grid = matrix([[indicator(x,y) for y in yrange] for x in xrange])

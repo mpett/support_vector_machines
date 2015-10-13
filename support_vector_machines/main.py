@@ -15,9 +15,9 @@ classB = []
 def K(x,y):
     #return linear_kernel(x,y)
     #return polynomial_kernel(x,y,2)
-    return polynomial_kernel(x,y,3)
+    #return polynomial_kernel(x,y,3)
     #return sigmoid_kernel(x,y,1.0/50,0.0)
-    #return radial_basis_function_kernel(x,y,5)
+    return radial_basis_function_kernel(x,y,5)
 
 def linear_kernel(x,y):
     return np.dot(x, np.transpose(y))
